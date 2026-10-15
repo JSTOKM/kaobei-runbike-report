@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>「靠北滑步車」LINE 群組話題分析報告</title>
+<style>
+  :root{
+    --ink:#1a1d23;
+    --sub:#5b6472;
+    --line:#e4e8ee;
+    --bg:#f6f8fb;
+    --card:#ffffff;
+    --accent:#1f6feb;
+    --accent-soft:#e8f1ff;
+    --warn:#b54708;
+    --warn-soft:#fff4e5;
+    --danger:#b42318;
+    --danger-soft:#fdecea;
+    --ok:#067647;
+    --ok-soft:#e7f6ef;
+    --purple:#6941c6;
+    --purple-soft:#f2ecfd;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    font-family:"Microsoft JhengHei","PingFang TC","Noto Sans TC",-apple-system,sans-serif;
+    background:var(--bg);
+    color:var(--ink);
+    line-height:1.85;
+    font-size:16px;
+  }
+  .wrap{max-width:1080px;margin:0 auto;padding:0 22px 90px;}
+
+  /* ---- header ---- */
+  header.hero{
+    background:linear-gradient(135deg,#0b2545 0%,#13315c 55%,#1f6feb 130%);
+    color:#fff;
+    padding:64px 22px 56px;
+    text-align:center;
+  }
+  .hero .tag{
+    display:inline-block;
+    background:rgba(255,255,255,.15);
+    border:1px solid rgba(255,255,255,.3);
+    padding:5px 16px;
+    border-radius:999px;
+    font-size:14px;
+    letter-spacing:.5px;
+    margin-bottom:18px;
+  }
+  .hero h1{margin:0 0 12px;font-size:32px;letter-spacing:1px;}
+  .hero p{margin:0 auto;max-width:720px;color:#cfdcf0;font-size:15.5px;}
+  .hero .meta{
+    margin-top:26px;
+    display:flex;flex-wrap:wrap;justify-content:center;gap:10px;
+  }
+  .hero .meta span{
+    background:rgba(255,255,255,.12);
+    border:1px solid rgba(255,255,255,.25);
+    padding:6px 14px;border-radius:8px;font-size:13.5px;
+  }
+
+  /* ---- nav ---- */
+  nav.toc{
+    position:sticky;top:0;z-index:50;
+    background:rgba(255,255,255,.95);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
+    padding:10px 0;
+  }
+  nav.toc .inner{
+    max-width:1080px;margin:0 auto;padding:0 18px;
+    display:flex;gap:4px;overflow-x:auto;
+  }
+  nav.toc a{
+    white-space:nowrap;
+    color:var(--sub);
+    text-decoration:none;
+    font-size:13.5px;
+    padding:6px 11px;border-radius:7px;
+    transition:.15s;
+  }
+  nav.toc a:hover{background:var(--accent-soft);color:var(--accent);}
+
+  /* ---- section ---- */
+  section{margin-top:54px;}
+  h2{
+    font-size:25px;
+    margin:0 0 6px;
+    display:flex;align-items:center;gap:12px;
+  }
+  h2 .num{
+    flex:none;
+    width:38px;height:38px;border-radius:11px;
+    background:var(--accent);color:#fff;
+    display:flex;align-items:center;justify-content:center;
+    font-size:17px;font-weight:700;
+  }
+  .lead{color:var(--sub);margin:2px 0 22px;font-size:15px;}
+  h3{font-size:19px;margin:30px 0 10px;padding-left:12px;border-left:4px solid var(--accent);}
+  h4{font-size:16.5px;margin:20px 0 8px;}
+
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:24px 26px;
+    margin-bottom:18px;
+    box-shadow:0 1px 3px rgba(16,24,40,.04);
+  }
+
+  /* callouts */
+  .callout{border-radius:12px;padding:16px 20px;margin:16px 0;font-size:15px;border:1px solid;}
+  .callout.key{background:var(--accent-soft);border-color:#bcd6ff;}
+  .callout.warn{background:var(--warn-soft);border-color:#f5d5a0;}
+  .callout.danger{background:var(--danger-soft);border-color:#f3b8b2;}
+  .callout.ok{background:var(--ok-soft);border-color:#a9dfc4;}
+  .callout.purple{background:var(--purple-soft);border-color:#d4c3f5;}
+  .callout b:first-child{display:block;margin-bottom:4px;}
+
+  /* tables */
+  table{width:100%;border-collapse:collapse;font-size:14.5px;margin:12px 0;background:#fff;}
+  th,td{border:1px solid var(--line);padding:11px 13px;text-align:left;vertical-align:top;}
+  th{background:#f0f4fa;font-weight:700;white-space:nowrap;}
+  tr:nth-child(even) td{background:#fafbfe;}
+  td.center,th.center{text-align:center;}
+  .table-scroll{overflow-x:auto;}
+
+  /* timeline */
+  .tl{position:relative;margin:22px 0 8px;padding-left:30px;}
+  .tl::before{
+    content:"";position:absolute;left:9px;top:6px;bottom:6px;width:3px;
+    background:linear-gradient(#1f6feb,#b54708);border-radius:3px;
+  }
+  .tl-item{position:relative;margin-bottom:26px;}
+  .tl-item::before{
+    content:"";position:absolute;left:-27px;top:6px;
+    width:15px;height:15px;border-radius:50%;
+    background:#fff;border:4px solid var(--accent);
+  }
+  .tl-item.hot::before{border-color:var(--danger);}
+  .tl-item.warn::before{border-color:var(--warn);}
+  .tl-date{
+    display:inline-block;font-weight:700;color:var(--accent);
+    font-size:14.5px;background:var(--accent-soft);
+    padding:2px 12px;border-radius:999px;margin-bottom:6px;
+  }
+  .tl-item.hot .tl-date{color:var(--danger);background:var(--danger-soft);}
+  .tl-item.warn .tl-date{color:var(--warn);background:var(--warn-soft);}
+  .tl-item h4{margin:4px 0 6px;border:0;padding:0;}
+  .tl-item p{margin:4px 0;color:#3c4453;font-size:15px;}
+
+  /* people chips */
+  .people{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px;margin-top:14px;}
+  .person{
+    background:#fff;border:1px solid var(--line);border-radius:12px;
+    padding:16px 18px;
+  }
+  .person .name{font-weight:800;font-size:16px;color:var(--ink);display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+  .person .role{font-size:12.5px;padding:2px 9px;border-radius:999px;font-weight:600;}
+  .role.protag{background:#fdecea;color:#b42318;}
+  .role.side-a{background:#fff4e5;color:#b54708;}
+  .role.side-b{background:#e8f1ff;color:#1f6feb;}
+  .role.voice{background:#e7f6ef;color:#067647;}
+  .role.other{background:#f0f4fa;color:#5b6472;}
+  .person .desc{font-size:14px;color:#3c4453;margin-top:6px;}
+  .person .rel{font-size:13px;color:var(--sub);margin-top:8px;padding-top:8px;border-top:1px dashed var(--line);}
+
+  /* relation map */
+  .relmap{
+    background:#fff;border:1px solid var(--line);border-radius:14px;
+    padding:28px;margin:16px 0;
+    font-size:15px;
+  }
+  .relmap .row{display:flex;align-items:flex-start;gap:14px;margin-bottom:14px;flex-wrap:wrap;}
+  .relmap .node{
+    background:var(--accent-soft);border:1.5px solid #bcd6ff;
+    padding:7px 15px;border-radius:10px;font-weight:700;color:#0b3d91;white-space:nowrap;
+  }
+  .relmap .node.red{background:var(--danger-soft);border-color:#f3b8b2;color:var(--danger);}
+  .relmap .node.orange{background:var(--warn-soft);border-color:#f5d5a0;color:var(--warn);}
+  .relmap .node.green{background:var(--ok-soft);border-color:#a9dfc4;color:var(--ok);}
+  .relmap .node.purple{background:var(--purple-soft);border-color:#d4c3f5;color:var(--purple);}
+  .relmap .arrow{color:var(--sub);font-weight:700;padding:7px 0;white-space:nowrap;}
+  .relmap .note{color:#3c4453;flex:1;min-width:220px;font-size:14.5px;}
+
+  /* quotes */
+  blockquote{
+    margin:10px 0;padding:12px 18px;
+    background:#f7f9fc;border-left:4px solid #c3d3ee;
+    border-radius:0 10px 10px 0;
+    font-size:14.5px;color:#3c4453;
+  }
+  blockquote .who{font-weight:700;color:var(--accent);margin-right:6px;}
+
+  /* flow */
+  .flow{display:flex;flex-wrap:wrap;gap:10px;align-items:stretch;margin:16px 0;}
+  .flow .step{
+    flex:1;min-width:180px;
+    background:#fff;border:1px solid var(--line);border-radius:12px;
+    padding:14px 16px;font-size:14px;position:relative;
+  }
+  .flow .step .n{font-weight:800;color:var(--accent);font-size:13px;letter-spacing:1px;}
+  .flow .step .t{font-weight:700;margin:3px 0 5px;font-size:15px;}
+  .flow .step .d{color:var(--sub);font-size:13.5px;line-height:1.65;}
+
+  ul.clean{margin:8px 0;padding-left:22px;}
+  ul.clean li{margin:5px 0;}
+  .pill{display:inline-block;background:#f0f4fa;border:1px solid var(--line);border-radius:6px;padding:1px 8px;font-size:13px;margin:1px 2px;color:#3c4453;}
+  .strong{font-weight:800;}
+  footer{
+    margin-top:70px;padding:30px 22px 50px;text-align:center;
+    color:var(--sub);font-size:13.5px;border-top:1px solid var(--line);
+  }
+  @media(max-width:640px){
+    .hero h1{font-size:24px;}
+    .card{padding:18px;}
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="tag">LINE 群組對話紀錄分析報告</div>
+  <h1>「靠北滑步車」群組話題完整解析</h1>
+  <p>一份讓完全不了解事件始末的人，也能快速掌握整個群組在討論什麼、誰跟誰有關聯、事件如何環環相扣的說明報告。</p>
+  <div class="meta">
+    <span>群組性質：台灣滑步車（Pushbike／Runbike）家長圈匿名交流群</span>
+    <span>紀錄期間：2026/09/24 – 2026/10/15（約 3 週）</span>
+    <span>對話總量：約 3,886 行／數千則訊息</span>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="inner">
+    <a href="#summary">一句話總結</a>
+    <a href="#group">群組輪廓</a>
+    <a href="#timeline">總時間軸</a>
+    <a href="#story1">事件一：賽後加報</a>
+    <a href="#story2">事件二：車隊決裂（主線）</a>
+    <a href="#story3">事件三：檢舉場地</a>
+    <a href="#story4">議題四：生態衰退</a>
+    <a href="#people">人物圖譜</a>
+    <a href="#relations">關係圖</a>
+    <a href="#culture">群組文化</a>
+    <a href="#conclusion">結論</a>
+  </div>
+</nav>
+
+<div class="wrap">
+
+<!-- ================= 1 SUMMARY ================= -->
+<section id="summary">
+  <h2><span class="num">1</span>一句話總結（先看這裡）</h2>
+  <p class="lead">給完全沒跟上的人：以下三行就是整個群組 3 週內發生的事。</p>
+
+  <div class="callout key">
+    <b>群組是什麼？</b>
+    「靠北滑步車」是一個台灣滑步車運動圈家長／教練的<strong>匿名靠北群</strong>（性質類似「靠北XX」社團），成員以幼兒滑步車選手的家長為主，大家用暱稱或匿名代號發言，專門吐槽、分享賽事資訊、八卦車隊恩怨。
+  </div>
+
+  <div class="callout danger">
+    <b>這 3 週最大的事件是什麼？（主線）</b>
+    南部「<strong>萌小孩（萌學園／藍色車隊，簡稱藍隊）</strong>」一位招牌選手「<span class="pill">泳萱</span>」的媽媽與車隊教練團決裂。該媽媽在社群平台 Threads（脆）上連日發文，指控教練「<strong>說免費卻說我沒付錢、欠錢不還、造謠、把我踢出群組</strong>」，並呼籲大家<strong>檢舉教練在公園違規收費上課</strong>。風波延燒到本群組後，引發長達 3 天（10/13–10/15）的激烈論戰：有人挺媽媽勇敢、有人罵她玉石俱焚、教練方「護衛隊」匿名進群帶風向反被打臉、媽媽本人親自現身貼截圖對決，甚至連「訓練場地是否真的被封鎖」都被群友實地查證是<strong>謠言</strong>。
+  </div>
+
+  <div class="callout warn">
+    <b>另外三條較小的故事線</b>
+    ① 9/29「<strong>酸酸爸</strong>」靠北「有人看完名單才加報名」的不公平現象，引發正反辯論；<br>
+    ② 「<strong>9527</strong>」力推沖繩 RIR2026 國際賽、飛翔盃竹北站，並以「破 400 人就剃光頭」做宣傳噱頭（後來真的剃了）；<br>
+    ③ 群友普遍共識：<strong>滑步車圈參賽人數逐年下滑、場地被檢舉越來越少、車隊與家長的「決裂輪迴」不斷重演</strong>。
+  </div>
+</section>
+
+<!-- ================= 2 GROUP ================= -->
+<section id="group">
+  <h2><span class="num">2</span>群組輪廓：這是個什麼樣的地方？</h2>
+  <p class="lead">理解群組性質，才能理解為什麼對話裡充滿「吃瓜、帶風向、護衛隊、靠北」這類詞。</p>
+
+  <div class="card">
+    <div class="table-scroll">
+      <table>
+        <tr><th style="width:150px;">項目</th><th>內容</th></tr>
+        <tr><td class="strong">群組名稱</td><td>靠北滑步車（依內容推測為滑步車圈的匿名靠北／閒聊群）</td></tr>
+        <tr><td class="strong">成員組成</td><td>幼兒滑步車選手家長為主，少數教練、車隊相關人士、裝備業者；成員眾多且流動高（紀錄中不斷有人加入／離開）</td></tr>
+        <tr><td class="strong">發言文化</td><td>多數人使用暱稱或匿名代號（如「9527」「天龍騷年」「叫你阿嬤來跑」），敢講真名的人少；靠北、幹話、吃瓜、梗圖齊飛</td></tr>
+        <tr><td class="strong">管理機制</td><td>有「管理員」帳號與「小幫手」帳號；偶爾發「本群明天要刪除，請加入新群」的通知（10/07、10/15 各一次），顯示群組會定期搬家以規避查緝或維持匿名性</td></tr>
+        <tr><td class="strong">涵蓋範圍</td><td>全台（北部、中部、南部、花東）皆有人；話題橫跨賽事資訊、車隊恩怨、裝備花費、教練八卦、場地合法性</td></tr>
+        <tr><td class="strong">紀錄期間</td><td>2026/09/24（週四）～ 2026/10/15（週四），共 22 天</td></tr>
+      </table>
+    </div>
+    <div class="callout purple">
+      <b>讀這份報告前請先建立的心理準備</b>
+      這個群組沒有絕對真相。多數爭議都是「<strong>羅生門</strong>」——當事人各說各話、旁觀者靠「聽說」補充、匿名帳號突然進來放火又消失。本報告的任務是<strong>忠實整理各方說法與群組內的風向變化</strong>，而非判定誰對誰錯。
+    </div>
+  </div>
+</section>
+
+<!-- ================= 3 TIMELINE ================= -->
+<section id="timeline">
+  <h2><span class="num">3</span>總時間軸：22 天內發生了什麼</h2>
+  <p class="lead">紅色＝主線大事件（萌孩車隊決裂）；橘色＝次級衝突；藍色＝一般話題。</p>
+
+  <div class="card">
+    <div class="tl">
+
+      <div class="tl-item">
+        <div class="tl-date">09/24（四）</div>
+        <h4>開場：詢問西螺鎮長盃賽事名單</h4>
+        <p>「Jo12」詢問 2026 西螺大橋觀光文化節滑步車比賽是否有名單；「姍姍來遲」回覆名單將於 115/9/7 公告於臉書粉專。此時群內多為日常閒聊與成員進出。</p>
+      </div>
+
+      <div class="tl-item warn">
+        <div class="tl-date">09/29（二）晚 23:14</div>
+        <h4>事件一：「賽後加報」靠北文引爆辯論</h4>
+        <p>「酸酸爸」發文：認真準備比賽、看完名單後，比賽當天卻冒出新選手加報，痛批主辦單位為多收報名費犧牲公平性。群友分成兩派：<strong>①挺酸酸爸</strong>（名單後加報不公平、可能擠掉凸台）vs <strong>②實力派</strong>（跑得贏就贏、現場本來就能加報、多練就好）。「有事請教」「大人太複雜」「叫你阿嬤來跑」主導反方；「9527」則勸「別把輸贏看得太重」。話題尾聲還影射「前陣子某比賽也有類似狀況、還跑了冠軍」（暗示「東部的驕傲」事件），但酸酸爸澄清不是他在講的那場。</p>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-date">09/30（三）上午</div>
+        <h4>話題轉向：回憶殺與圈內生態感嘆</h4>
+        <p>「9527」「天龍騷年」「呱呱雞」聊起早年滑步車賽事（家樂福賽、台中市政府廣場賽、怪物盃、繞圈賽等），感慨「北部小選手消失較多、中南部還在跑」，為後來的「生態衰退」議題埋下伏筆。</p>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-date">09/30（三）下午</div>
+        <h4>議題：滑步車到底多貴？</h4>
+        <p>由「開心」一句「一年花快 60 萬，我ㄤ說可以買轎車」引爆。多人比較滑步車 vs 游泳／羽球／直排輪／足球的花費，共識結論：<strong>「只是運動都不貴，要競速才燒錢」</strong>、「滑步車競速生涯短，把其他運動壓到同樣年限其實不算最貴」、「量力而為、不比較就沒有傷害」。</p>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-date">10/04（日）晚</div>
+        <h4>9527 的剃頭豪賭：飛翔×DATi 竹北站衝 400 人次</h4>
+        <p>「9527」宣傳 2026/10/17 飛翔×DATi 國際盃竹北站報名，喊出「一個小時內衝到 400 我就剃光頭」。結果真的剃了（他本來就近乎光頭，只剩瀏海，群友狂酸）。</p>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-date">10/05–10/06</div>
+        <h4>沖繩 RIR2026 行銷 + 日常</h4>
+        <p>「9527」多次貼出沖繩 Runbike International Race 2026（12/5 日本賽制、12/6 台灣賽制）報名資訊，催促第一階段報名截止。群友討論要不要去、對手強度、住宿花費。</p>
+      </div>
+
+      <div class="tl-item warn">
+        <div class="tl-date">10/13（二）上午 08:03</div>
+        <h4>事件二導火線：Threads 爆料文被丟進群裡</h4>
+        <p>「史迪奇奇怪怪.」貼出一則 Threads 連結並問「這什麼卦、這麼靠北居然沒有上靠北」。話題從這裡開始失控。內容指向：<strong>「萌小孩／萌學園（藍色車隊）」的招牌選手媽媽「詠萱媽（泳萱媽）」與車隊教練團鬧翻並公開爆料</strong>。群友開始瘋狂吃瓜、還有人喊「懶人包有嗎」。</p>
+      </div>
+
+      <div class="tl-item hot">
+        <div class="tl-date">10/13 全天</div>
+        <h4>事件二主戰場（上）：吃瓜、站隊、翻舊帳</h4>
+        <p>整整一天的話題全部圍繞萌孩事件。關鍵進展見下方〈事件二〉章節。當天出現「藍色車隊」過去退隊潮、禁止外練隊規、「免費 vs 沒算費用」語意戰、教練向家長借錢等子議題。</p>
+      </div>
+
+      <div class="tl-item hot">
+        <div class="tl-date">10/13 中午 12:35</div>
+        <h4>高潮：當事人「我就是泳萱媽媽」親自進群</h4>
+        <p>在「彎道殺手」（疑似車隊方護衛隊）匿名進群開砲又秒退之後，「<strong>我就是泳萱媽媽</strong>」以本尊身分加入聊天，並直接貼出對話截圖證據。群組沸騰（「我要看到血流成河」）。她指認踢她出群的人就是「小慧」——也就是前面進來開砲的「彎道殺手」。</p>
+      </div>
+
+      <div class="tl-item hot">
+        <div class="tl-date">10/13 下午–10/14</div>
+        <h4>事件二主戰場（下）：借錢爭議、打小孩指控、反方現身</h4>
+        <p>話題延伸：①教練「被詐騙所以借錢」的說法浮出出檯面；②「嗯哼」「萬聖節快樂」指控泳萱媽媽「用訓練掩飾打小孩」「發高燒還逼練車」；③自稱群管的「SSS」與「阿山」替車隊方辯護；④「檸檬」公開自己的類似遭遇力挺媽媽勇敢。</p>
+      </div>
+
+      <div class="tl-item warn">
+        <div class="tl-date">10/14（三）晚 20:46</div>
+        <h4>事件三：「場地被封鎖線封鎖」謠言與查證</h4>
+        <p>「哇哈哈哈」宣稱高雄楠梓駕訓班旁的練車場地因被檢舉而<strong>拉起封鎖線、無法上課</strong>，連直排輪都沒得玩，並把矛頭指向泳萱媽媽的呼籲檢舉。「酸酸」補充該地之前就瘋狂被檢舉到某高階車隊解散。然而——</p>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-date">10/15（四）凌晨 00:20</div>
+        <h4>查證反轉：封鎖線是謠言</h4>
+        <p>「非洲獵人」表示自己當晚 8 點買晚餐時經過該地，<strong>根本沒有封鎖線、直排輪照樣在滑</strong>，並以常理推論「被檢舉頂多警察巡邏開單，不會拉封鎖線」。他怒轟「哇哈哈哈」是在帶風向、想把無辜的 HLK 車隊（HL）拖下水。事件三以造謠收場。</p>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-date">10/15（四）</div>
+        <h4>餘波：反方聲量集結、群組再次搬家</h4>
+        <p>「萬聖節快樂」「67」「嗯哼」等反方持續質疑泳萱媽媽證據不足（「說被造謠卻沒有任何動物教練的文字紀錄」）。酸酸爸呼籲「不要攻擊學生家長、動物家族很棒」。上午 07:36 小幫手再度公告「本群明天要刪除，請加入新群」。話題在「有點膩了、歹戲拖棚」的疲乏感中暫告段落。</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ================= 4 STORY 1 ================= -->
+<section id="story1">
+  <h2><span class="num">4</span>事件一：「賽後加報」公平性之爭（09/29）</h2>
+  <p class="lead">小事件，但完整呈現了這個圈子的價值衝突：成績主義 vs 親子運動。</p>
+
+  <div class="card">
+    <h4>前因</h4>
+    <ul class="clean">
+      <li>「酸酸爸」認真準備了一場滑步車比賽，事先研究了官方公布的錄取名單。</li>
+      <li>比賽當天卻發現有選手「<strong>臨時加報</strong>」出現在場上，是他名單上沒看過的人。</li>
+      <li>他質疑主辦單位「為了多收一個人的報名費，忽略公平性賽制」，並坦言最直接的影響是：<strong>「我可能就上不了台了」</strong>（凸台＝頒獎台）。</li>
+    </ul>
+
+    <h4>正反雙方論點</h4>
+    <div class="table-scroll">
+      <table>
+        <tr><th class="center" style="width:50%;">挺酸酸爸（不公平派）</th><th>反方（實力派／看開派）</th></tr>
+        <tr>
+          <td>
+            <ul class="clean">
+              <li><b>酸酸爸</b>：認真準備的人被突襲，主辦單位為錢放水。</li>
+              <li><b>聽聽</b>：現場加報的話，報名費應該比較高，邏輯矛盾。</li>
+              <li><b>天龍騷年（前段）</b>：聽起來是「爸爸上不去」的怨氣。</li>
+            </ul>
+          </td>
+          <td>
+            <ul class="clean">
+              <li><b>叫你阿嬤來跑</b>：直接說出來就好，「是不是被擠下凸台生氣了」，完全可以接受挑戰。</li>
+              <li><b>有事請教</b>：現場報名本來就無法預測對手是誰，「跑不贏就摸摸鼻子、多練」。</li>
+              <li><b>大人太複雜</b>：「不想被擠下凸台就卯起來練，沒毛病」，並舉光速盃第二天也能現場加報為例。</li>
+              <li><b>9527</b>：圈子待久了「輸贏看太重了吧」，應該享受親子回憶；「怕就出國比」。</li>
+              <li><b>堅持</b>：「比賽就是這樣，想要贏還要算名次」、「走後路多得是」。</li>
+            </ul>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <h4>旁枝：被影射的「前例」</h4>
+    <p>「有事請教」提到「前陣子某比賽不是也這樣？還跑了冠軍呢」，「舖嘛」猜「東部的驕傲？」，「大人太複雜」說「好像知道是哪場」。這段影射引發短暫緊張，但酸酸爸隨即澄清「抱歉！不是🙏」，事件一避免直接開撕。</p>
+
+    <h4>結果與後續影響</h4>
+    <ul class="clean">
+      <li>酸酸爸自嘲「看來這裡不能隨便靠北了，一下就被護衛隊帶走」——這句「護衛隊」的梗，一個多月後在萌孩事件中被正式發揚光大。</li>
+      <li>話題自然淡出，但確立了本群的討論模式：<strong>靠北文 → 立刻有人反問「你自己練夠了嗎」→ 幹話稀釋 → 事件結束</strong>。</li>
+      <li>10/01 酸酸爸還去打聽「KBG 哲哥哥是誰？很快嗎」，顯示他從抱怨者轉為開始認真認識圈內選手。</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ================= 5 STORY 2 (MAIN) ================= -->
+<section id="story2">
+  <h2><span class="num">5</span>事件二【主線】：萌小孩（藍色車隊）與泳萱媽媽的決裂</h2>
+  <p class="lead">這是整份紀錄中篇幅最長、衝突最烈、捲入人數最多的事件。以下按「當事人 → 事發經過 → 各方說法 → 群組攻防戰 → 衍生議題」拆解。</p>
+
+  <div class="card">
+    <h3>5.1 事發前的背景（為什麼這件事會發生）</h3>
+    <p>根據群內「櫻萬美夕」「檸檬」「非洲獵人」「吵架王」等人的補充，萌孩事件不是單一衝突，而是<strong>滑步車圈「車隊輪迴」結構問題的一次爆發</strong>：</p>
+    <ul class="clean">
+      <li><b>車隊結構</b>：「萌小孩／萌學園」（群內暱稱「萌孩」「藍隊」「藍色車隊」）是一個<strong>家族式經營</strong>的車隊，約有 5 位教練，外號都是動物（河馬、兔子、鯨魚、猴子，加一個「魔術」），另有皮克球事業。據說主要做小齡（2–4 歲）啟蒙課程。</li>
+      <li><b>招牌與資源交換</b>：泳萱是萌孩的「招牌選手」（群友暱稱「腹肌女」「彎道殺手」——注意：群友用「彎道殺手」稱讚孩子騎車風格，而匿名進群攻擊的帳號也叫「彎道殺手」，疑似冒名或影射）。媽媽為車隊大量付出（制定隊規、幫忙後山盃活動、照顧留下的孩子），換取車隊資源（輪組試用、免費租借跑台、免費保養等）。</li>
+      <li><b>孩子變強後的結構性矛盾</b>：泳萱技術成長到需要更強的對手與訓練環境，但車隊以小齡為主、且有「<strong>禁止外練</strong>」隊規。過去車隊曾用這條規則踢掉其他選手；如今這條規則也用在泳萱媽媽身上——群友「櫻萬美夕」一針見血：<strong>「被自己的魔法打敗」</strong>。</li>
+      <li><b>決裂</b>：據泳萱媽媽的說法，她在群組提出課程問題未獲回應後，被一位叫「小慧」的家長「自作主張」踢出車隊群組；教練方則未正面回應。媽媽隨後在 Threads 連日發文並整理截圖證據。</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>5.2 泳萱媽媽（爆料方）的三大指控</h3>
+    <div class="callout danger">
+      <b>指控一：「免費」變「沒付錢」的語意戰</b>
+      媽媽表示，車隊當初提供跑台等資源是「<strong>免費使用</strong>」，但決裂後教練對外說法變成「<strong>她都沒付錢／沒算費用</strong>」。群友花了大量篇幅辯論這兩句話的差異——「免費送你」vs「沒跟你收錢」vs「你沒付錢」在中文語意與情感上完全不同。這也成為整起事件最經典的比喻大賽（詳見 5.5）。
+    </div>
+    <div class="callout danger">
+      <b>指控二：教練向她借錢、欠錢不還</b>
+      媽媽在爆料中提到教練欠錢未還。群友拼湊出的版本是：<strong>教練聲稱被詐騙、向她借錢周轉，後來這筆錢是教練的女朋友還的</strong>。群友質疑：「教練女友身價幾億，為什麼要跟一個家長借？」「為什麼只跟她借？關係很深？」「有追討紀錄嗎？有約定用途嗎？」——但也有人認為「跟錢有關必傷感情」、「當初關係好才會借，現在翻舊賬」。
+    </div>
+    <div class="callout danger">
+      <b>指控三：教練方造謠、且處理方式粗暴</b>
+      媽媽指稱「動物家族教練們一直造謠她」，但<strong>始終沒有提出任何文字或截圖證據</strong>（因為「造謠都是用說的，哪裡會有截圖」）。群內反方（SSS、萬聖節快樂等）緊咬這點：「說被造謠，卻拿不出動物們的文字紀錄」。至於踢群事件，媽媽強調自己「私下問沒回應、在群組問就被踢」。
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>5.3 群組內的攻防過程（這才是本群最精彩的部分）</h3>
+
+    <h4>第一階段：吃瓜起手式（10/13 08:03–12:00）</h4>
+    <p>「史迪奇奇怪怪.」丟出 Threads 連結後，群友迅速分成「好奇吃瓜派」與「已有立場派」。「檸檬」率先表態佩服泳萱媽「說出事實的勇氣」，並自曝「我就是那個離隊還被前車隊黑又被造謠的人，我什麼話都沒解釋就離開」。「登登登登」則謹慎提醒：「目前好像沒看到教練到底說了什麼，到底有沒有造謠？」</p>
+
+    <h4>第二階段：護衛隊現身（10/13 11:56–12:17）</h4>
+    <p>一個暱稱「<strong>彎道殺手</strong>」的帳號突然加入聊天，一進來就猛烈攻擊泳萱媽媽：「感覺是她個人單方面報復」「沒看到有人聲援她」「跟瘋狗一樣」「她想搞的大家沒課上」，還點名「小慧」（泳萱媽媽指的踢群者）、「啾媽」等人的關係。群友立刻警覺：</p>
+    <ul class="clean">
+      <li>「殭屍炒大腸」：「好多的聽說，要人家公布，你也不公布你的聽說。」</li>
+      <li>「檸檬」：「你這麼關注人家喔？你意圖不軌。」</li>
+      <li>「海月初」：「連家長的朋友是誰都說得出來，你應該是萌孩車隊裡的人。」</li>
+      <li>「非洲獵人」：「你都在幕內了，怎麼會不知道內幕？」</li>
+    </ul>
+    <p>「彎道殺手」在被圍剿後<strong>於 12:17 離開聊天</strong>。群友嘲諷「帶風向失敗」「害我褲子脫一半的傢伙」。</p>
+
+    <h4>第三階段：本尊現身（10/13 12:35–13:00）</h4>
+    <p>緊接著，「<strong>我就是泳萱媽媽</strong>」加入聊天，第一句就是：「沒錯，我就是」，並直接貼出兩張截圖。她指認：</p>
+    <blockquote><span class="who">我就是泳萱媽媽</span>會稱小慧的人只有他，會說瘋狗的也只有他。他現在是萌孩的最大頭唷。就是他把我踢群組。</blockquote>
+    <p>群組瞬間沸騰。「非洲獵人」喊「我要看到血流成河」，「檸檬」說「你做了我很多不敢做的事」，多人稱讚泳萱在賽場上的表現（光速盃從後追殺反超的影片被反覆讚美「用腦袋在騎車」）。</p>
+
+    <h4>第四階段：反方與中立方的反撲（10/13 下午起）</h4>
+    <p>並非所有人都挺媽媽。「SSS」（自稱群組管理者）替車隊方說話：「群組我開的，我要留誰是我的權利」「有人根本沒在狀況內，為何要影響別人」。「阿山」則指控「她把教練個人私事放上群組，只截對自己有利的部分」。「萬聖節快樂」、「嗯哼」、「67」等南部群友更是火力全開，質疑證據力與動機。</p>
+    <p>更有趣的是，後續又有兩個疑似車隊方的帳號「<strong>泳萱媽媽會用腳踢泳萱</strong>」（10/13 14:02）和「<strong>好成績是打出來的</strong>」、「<strong>詠軒媽媽根本用訓練來掩飾自己打小孩</strong>」（10/14 14:03–14:05）<strong>進群秒退、一句話都不說</strong>，只用帳號名稱攻擊。群友狂酸「連屁都不敢放」「這個人真的好爛」「字還打錯」「等CD」。</p>
+  </div>
+
+  <div class="card">
+    <h3>5.4 事件後續：泳萱去向與「自由車手」說</h3>
+    <ul class="clean">
+      <li>群友「櫻萬美夕」、「滑～快滑」透露：<strong>泳萱疑似轉去 X 戰隊上課／或成為「自由車手」</strong>（不掛車隊、自己練自己比）。媽媽本人一度說「明年日本最後一次參戰」。</li>
+      <li>群友質疑：「那麼優秀，離開得漂亮的話，各大車隊應該搶著要，但看起來沒有？」「是沒人敢收，還是自由車手定義不一樣？」</li>
+      <li>也有說法認為媽媽對外宣稱「成績是母女自己研究出來的、教練教的學不到東西」，卻同時私人教練課買好買滿——被反方批評邏輯矛盾。</li>
+      <li>「IVY」補充孩子的訓練強度爭議：「發高燒也要繼續練車，我們看了都好心疼，小孩也不敢靠近他」，暗示高压训练的阴暗面。</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>5.5 群友的「比喻大賽」（理解這場決裂的最佳入口）</h3>
+    <p>群友用大量生活比喻解釋「免費→沒付錢」與「付出→翻臉」的結構，這是理解整個事件情緒的核心：</p>
+    <div class="table-scroll">
+      <table>
+        <tr><th style="width:30%;">提出者</th><th>比喻</th></tr>
+        <tr><td class="strong">檸檬</td><td>「就跟情侶分手、夫妻離婚一樣。以前有多愛，看到的都是優點；分手後有多恨，看到的都是缺點。」</td></tr>
+        <tr><td class="strong">櫻萬美夕</td><td>「當下教練要捧招牌、雙方各取所需；但現在分手了，只能翻舊帳。」</td></tr>
+        <tr><td class="strong">海月初</td><td>「愛的時候買東西說我送你，分手的時候說這是我買的，錢還我。」</td></tr>
+        <tr><td class="strong">上課家長真複雜</td><td>「交往給你嘟，分手說你都嘟完沒給錢（？）」</td></tr>
+        <tr><td class="strong">滑～快滑</td><td>「愛到咖慘死的概念？最後分手變穿紅衣上吊的厲鬼。」</td></tr>
+        <tr><td class="strong">Nobody nobody bon u</td><td>「同隊＝免費使用吃到飽；離隊＝沒算費用白嫖。」</td></tr>
+        <tr><td class="strong">吵架王（輪迴論）</td><td>「一開始各取所需→小孩變強→跳去更強車隊→啟蒙教練不樂意→撕破臉。一直以來都是這樣輪迴。」</td></tr>
+        <tr><td class="strong">檸檬（避免衝突的解方）</td><td>「要在最高點急流勇退，然後全力支持教練，就可以成功脫身。」</td></tr>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 6 STORY 3 ================= -->
+<section id="story3">
+  <h2><span class="num">6</span>事件三：「檢舉場地」風波與封鎖線謠言（10/14–10/15）</h2>
+  <p class="lead">萌孩事件的延伸子線：媽媽呼籲檢舉 → 傳出場地被封 → 群友實地查證是謠言。</p>
+
+  <div class="card">
+    <h4>背景：滑步車教練在公園上課的合法性問題</h4>
+    <p>群內長年存在一個「公開的秘密」：<strong>多數滑步車教練在公園、橋下、宮廟旁等公共場地上課收費，但這些場地依法不能營利使用，也幾乎沒人付場地費或報稅</strong>。「悄悄話」「sandenpilicar」「舖嘛」等人都點出這件事，並認為「積非成是」「大家你知我知」。因此「呼籲檢舉」對教練與在地車隊是極具殺傷力的武器。</p>
+
+    <h4>導火線：泳萱媽媽呼籲檢舉</h4>
+    <p>據群友轉述，泳萱媽媽在 Threads 上公開呼籲大家檢舉教練在公園（公有地）違規收費上課，並質疑「佔用政府資源」。這項行動被南部群友視為「<strong>玉石俱焚</strong>」——自己已經離開車隊，卻要斷掉其他孩子的練車場地。</p>
+
+    <h4>謠言升級：「封鎖線」事件</h4>
+    <p>10/14 晚，「哇哈哈哈」宣稱：「楠梓駕訓班旁那麼好的場地被封鎖線圍起來無法上課，我朋友在那練直排輪也沒得玩了，有人打電話去檢舉。」這則消息引發南部群友恐慌（「接下來就是天后宮、公園都不能練車了」）。</p>
+
+    <h4>反轉：群友實地查證</h4>
+    <div class="callout ok">
+      <b>「非洲獵人」的查證（10/15 凌晨）</b>
+      「我今天 2000 買晚餐還經過那裡，沒看到三小封鎖線啊」「我還看到直排輪在滑勒」「根據經驗，被檢舉不會拉封鎖線，用常識推論就知道」。他直指「哇哈哈哈」是想帶風向、把無辜的 HLK 車隊（HL）拖下水淌渾水。「盡力」也實地確認「沒看到封鎖線」。
+    </div>
+    <p>「櫻萬美夕」補充歷史脈絡：那塊地早年屬於高雄「老鷹車隊」，被瘋狂檢舉到車隊解散；之後換藍隊使用，反而都沒事——暗示<strong>檢舉行動背後可能有地盤與恩怨因素，不是單純的公益正義</strong>。</p>
+
+    <h4>結果</h4>
+    <ul class="clean">
+      <li>封鎖線被證實為謠言，「哇哈哈哈」被圍剿後跳針迴避、最終閉嘴。</li>
+      <li>但「場地越來越少」的焦慮是真的——群友共識：空地越來越少、檢舉風氣再起，對整個運動生态是實質傷害。</li>
+      <li>此事件確立了本群一個重要功能：<strong>兼具「爆料場」與「事實查核場」雙重角色</strong>——有人帶風向，就會有人實地查證打臉。</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ================= 7 STORY 4 ================= -->
+<section id="story4">
+  <h2><span class="num">7</span>議題四：滑步車生態衰退的集體焦慮</h2>
+  <p class="lead">散落在各天對話中，但其實是所有事件的共同背景音。</p>
+
+  <div class="card">
+    <h4>數據面：參賽人數全面下滑</h4>
+    <ul class="clean">
+      <li>「9478」：放電盃、後山盃人數都減少。</li>
+      <li>「滑步車也有大喇叭」：<strong>Bixbi 從巔峰期 500 人跌到 300 人</strong>。</li>
+      <li>「悄俏話」「海月初」「山邊的孩子」：光速盃、Bixbi 人都變少；「同一個歲組去比賽的永遠都是這幾個」。</li>
+      <li>「9527」：以前比賽半天結束，現在開賽到結束快 9 小時（反過來印證人變少）。</li>
+    </ul>
+
+    <h4>原因診斷（群友共識）</h4>
+    <div class="table-scroll">
+      <table>
+        <tr><th style="width:30%;">原因</th><th>代表說法</th></tr>
+        <tr><td class="strong">門檻太高</td><td>Norman：「一台車 4.5 萬起跳＋高強度體能訓練」，小孩壓得很早、提早退役。</td></tr>
+        <tr><td class="strong">大人輸不起</td><td>滑步車也有大喇叭：「台灣爸媽經不起輸，小孩贏不了就找下一個戰場」；來都來了 why not：「不是小朋友輸不起，是大人輸不起」。</td></tr>
+        <tr><td class="strong">上小學自然流失</td><td>呱呱雞：「上小學之後要靠孩子熱誠才玩得下去，不然沒上台只能被打誰還想騎」；海月初：五歲後接觸其他才藝，差距拉開就退。</td></tr>
+        <tr><td class="strong">車隊恩怨勸退</td><td>海月初：「大人的世界太複雜了，看到後來覺得好好練車好難喔」；上課家長真複雜：「搶資源、小動作、聯合排擠就飽了」。</td></tr>
+        <tr><td class="strong">轉坑其他運動</td><td>喵喵喵喵喵叫：「大家都打陀螺了」（戰鬥陀螺成為新戰場）；也有人轉直排輪、游泳、足球。</td></tr>
+      </table>
+    </div>
+
+    <h4>對照：日本與國外的情況</h4>
+    <ul class="clean">
+      <li>「吕布少年郎」：不只台灣，<strong>日本 RCS 今年比賽人也少很多</strong>。</li>
+      <li>「9527」：鼓勵大家出國看看（沖繩 RIR2026），「走出去看看外面的世界，好的要學習、不好的要提醒」。</li>
+      <li>「史迪奇奇怪怪.」：國外名單 6 歲之後人反而更多——對照台灣早早退役的現象。</li>
+      <li>「檸檬」：「東南亞目前正夯，因為他們還沒經歷輪迴」。</li>
+    </ul>
+
+    <h4>花費議題（9/30 專題的延伸結論）</h4>
+    <ul class="clean">
+      <li>「開心」：一年花快 60 萬；「檸檬」連算都不敢算。</li>
+      <li>但多數人最終同意「天龍騷年」的框架：<strong>「只是運動都不貴，你要培養成運動員，沒有一个是便宜的」</strong>；把所有運動壓到跟滑步車一樣短的競速年限，滑步車其實算便宜。</li>
+      <li>「舖嘛」算盤：2 歲騎到 12 歲 OP 畢業可騎 10 年，10–20 萬裝備均攤一年 1–2 萬，划算。</li>
+      <li>也有「聽聽」自嘲「年薪沒有兩百萬的不要騎滑步車」的反串。</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ================= 8 PEOPLE ================= -->
+<section id="people">
+  <h2><span class="num">8</span>人物圖譜：誰是誰？</h2>
+  <p class="lead">只列與主要事件相關者。標籤顏色對應其在萌孩事件中的立場。</p>
+
+  <h3 style="margin-top:26px;">8.1 主線當事人（萌孩事件）</h3>
+  <div class="people">
+    <div class="person">
+      <div class="name">泳萱媽媽（詠萱媽）<span class="role protag">爆料方・主線核心</span></div>
+      <div class="desc">萌孩車隊前家長、招牌選手「泳萱」（腹肌女／彎道殺手）的母親。為車隊大量付出後與教練團決裂，在 Threads 連日發文指控教練團，並親自加入本群貼截圖對決。立場：教練欠錢、造謠、踢群不公。</div>
+      <div class="rel">關聯：與萌孩教練團決裂 → 被「小慧／彎道殺手」踢群 → 傳轉往 X 戰隊或成為自由車手 → 呼籲檢舉場地。</div>
+    </div>
+    <div class="person">
+      <div class="name">萌小孩／萌學園（藍色車隊）<span class="role side-b">被爆料方</span></div>
+      <div class="desc">南部家族式經營車隊，約 5 位教練、外號皆為動物（河馬、兔子、鯨魚、猴子、魔術），另有皮克球事業。主打小齡啟蒙，以招牌選手帶曝光、換取家長資源投入的經營模式聞名。事件中始終未公開回應。</div>
+      <div class="rel">關聯：過去有禁止外練規定與退隊潮 → 本次與泳萱家決裂 → 「護衛隊」（小齡家長）多次匿名進群護航。</div>
+    </div>
+    <div class="person">
+      <div class="name">小慧／「彎道殺手」帳號<span class="role side-a">車隊方・疑似護衛隊</span></div>
+      <div class="desc">泳萱媽媽指稱「把我踢群組」、「萌孩最大頭」的人。10/13 以「彎道殺手」暱稱進群攻擊泳萱媽媽，被群友圍剿後秒退。後續又有「泳萱媽媽會用腳踢泳萱」等攻擊性帳號進群秒退，手法相同。</div>
+      <div class="rel">關聯：踢群事件執行者 → 進群帶風向失敗 → 引發本尊現身。</div>
+    </div>
+    <div class="person">
+      <div class="name">SSS<span class="role side-b">車隊方・辯護</span></div>
+      <div class="desc">自稱「群組我開的」的管理者型人物，替車隊方辯護：踢人是管理群組的權利、換車隊很正常、泳萱媽媽太執著。也被部分群友懷疑是萌孩騎士。</div>
+      <div class="rel">關聯：與：與檸檬、殭屍炒大腸、非洲獵人多次交鋒。</div>
+    </div>
+    <div class="person">
+      <div class="name">萬聖節快樂・嗯哼・67・可愛<span class="role side-a">反泳萱媽媽派</span></div>
+      <div class="desc">質疑泳萱媽媽證據不足的南部群友群。萬聖節快樂細數疑點（借錢無借據、造謠無截圖、不找教練卻上網爆料）；嗯哼指控媽媽「用訓練掩飾打小孩」；67 曾上過萌孩課、認為初階課程很快樂；可愛認為媽媽人格有問題。</div>
+      <div class="rel">關聯：與非洲獵人、盡力（查證派）在封鎖線議題上短暫合作，但立場整體偏車隊方。</div>
+    </div>
+  </div>
+
+  <h3 style="margin-top:34px;">8.2 群內主要發聲者（中立／吃瓜／引導討論）</h3>
+  <div class="people">
+    <div class="person">
+      <div class="name">檸檬<span class="role voice">力挺媽媽・經驗共鳴</span></div>
+      <div class="desc">本身是「離隊還被前車隊黑又被造謠」的受害者，全程力挺泳萱媽媽的勇氣，但也主張「吃瓜看瓜就好、不用過多主觀評論」。金句製造機（情侶分手比喻、車隊輪迴筆記、投胎要投對地方）。</div>
+      <div class="rel">關聯：自曝往事 → 與 SS​S 辯論 → 自稱「泳萱粉絲」。</div>
+    </div>
+    <div class="person">
+      <div class="name">9527<span class="role other">圈內老鳥・賽事推廣</span></div>
+      <div class="desc">待在滑步車圈 5–6 年的資深人物，飛翔（Flying Park）賽事推廣者，持 EMT1 初級救護執照。個性愛開幹話（剃光頭梗、多啦A夢梗），常扮演「輸贏看淡、回歸親子」的調解角色，也是沖繩 RIR2026 的積極宣傳者。</div>
+      <div class="rel">關聯：主導賽事宣傳 → 事件中多以幹話稀釋緊張氣氛。</div>
+    </div>
+    <div class="person">
+      <div class="name">天龍騷年<span class="role other">吐槽役・情報通</span></div>
+      <div class="desc">幽默毒舌、消息靈通，常一句話戳中要害。對車隊經營、稅務、裝備價格都有常識級了解。與史迪奇奇怪怪. 是現實好友（曾一起去烤肉）。</div>
+      <div class="rel">關聯：多次點破匿名帳號破綻、質疑「聽說」的可信度。</div>
+    </div>
+    <div class="person">
+      <div class="name">史迪奇奇怪怪.<span class="role voice">理性派・議題引爆者</span></div>
+      <div class="desc">10/13 第一個把 Threads 爆料連結丟進群的人。重視網路安全（批評媽媽把小孩連名帶姓放上公開平台）、主張「好聚好散不用互相攻擊」，但對教練方也不假辭色。</div>
+      <div class="rel">關聯：引爆事件二 → 與天龍騷年現實熟識 → 對護衛隊帳號持續圍觀。</div>
+    </div>
+    <div class="person">
+      <div class="name">非洲獵人<span class="role voice">事實查核・戰鬥力強</span></div>
+      <div class="desc">與 HLK 車隊（HL）關係密切，反感別人把無辜車隊拖下水。10/15 凌晨親自查證「封鎖線」是謠言，成為扭轉風向的關鍵人物。嗆人極為精準。</div>
+      <div class="rel">關聯：查證封鎖線謠言 → 戳破哇哈哈哈帶風向 → 護 HLK。</div>
+    </div>
+    <div class="person">
+      <div class="name">海月初<span class="role voice">溫和觀察者</span></div>
+      <div class="desc">發言持平、常整理資訊（貼出泳萱媽媽更新的 Threads 連結）。金句「大人的恩怨大人自己處理，不要影響到小孩」代表多數中立家長心聲。</div>
+      <div class="rel">關聯：多次扮演「吃瓜但保持同理」的角色。</div>
+    </div>
+    <div class="person">
+      <div class="name">殭屍炒大腸<span class="role other">氣氛組・毒舌</span></div>
+      <div class="desc">梗圖與幹話擔當，「我褲子都脫一半了，把聽說講完」、「要護航教練帶點新證據再進來」等發言屢屢帶動群內節奏。</div>
+    </div>
+    <div class="person">
+      <div class="name">沐恩<span class="role other">追劇型吃瓜群眾</span></div>
+      <div class="desc">自稱「看不完欸、認真上班都看這個」，代表典型把群組當連續劇追的旁觀者。</div>
+    </div>
+    <div class="person">
+      <div class="name">櫻萬美夕<span class="role voice">內幕補充者</span></div>
+      <div class="desc">多次提供藍色車隊歷史脈絡（去年退隊潮、不能外練規定、老鷹車隊與場地恩怨），以及對家長生態的犀利觀察（「車隊有問題的都是家長」）。</div>
+    </div>
+    <div class="person">
+      <div class="name">吵架王<span class="role voice">輪迴論提出者</span></div>
+      <div class="desc">完整提出「啟蒙教練與家長的決裂輪迴」理論，成為群內解釋車隊恩怨的標準框架。</div>
+    </div>
+  </div>
+
+  <h3 style="margin-top:34px;">8.3 其他事件相關人物</h3>
+  <div class="people">
+    <div class="person">
+      <div class="name">酸酸爸／酸酸<span class="role other">事件一發起者・好奇寶寶</span></div>
+      <div class="desc">9/29 靠北「賽後加報」的當事人，後續常以提問者姿勢出現（問哲哥哥是誰、問沖繩名單）。在萌孩事件中立場搖擺，曾誤以為有人要爆料，也呼籲「不要攻擊學生家長」。</div>
+    </div>
+    <div class="person">
+      <div class="name">哇哈哈哈<span class="role side-a">謠言散布者</span></div>
+      <div class="desc">10/14 晚宣稱楠梓場地被封鎖線封鎖，被非洲獵人實地查證為謠言後跳針迴避。</div>
+    </div>
+    <div class="person">
+      <div class="name">盡力<span class="role voice">查證協力者</span></div>
+      <div class="desc">與非洲獵人一同實地確認封鎖線不存在；自稱「萌騎士」，對抹黑行為反感。</div>
+    </div>
+    <div class="person">
+      <div class="name">IVY<span class="role other">訓練內幕透露者</span></div>
+      <div class="desc">透露泳萱「發高燒也要繼續練車」、「乖到像機器人」等訓練細節，引發對高壓訓練的討論。</div>
+    </div>
+    <div class="person">
+      <div class="name">叫你阿嬤來跑・有事請教・大人太複雜<span class="role other">事件一反方主力</span></div>
+      <div class="desc">9/29 主張「跑不贏就多練」的實力派三人組，其中「叫你阿嬤來跑」個性最衝、不斷逼問「直接說出來」。</div>
+    </div>
+    <div class="person">
+      <div class="name">Norman・9478・滑步車也有大喇叭<span class="role other">生態衰退論者</span></div>
+      <div class="desc">提出參賽人數下滑數據與原因分析（門檻高、Bixbi 從 500 掉到 300 等）。</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 9 RELATIONS ================= -->
+<section id="relations">
+  <h2><span class="num">9</span>關係圖：誰跟誰有什麼糾葛</h2>
+  <p class="lead">用文字關係圖呈現核心人物之間的連結，箭頭方向＝「對」，說明欄＝關係內容。</p>
+
+  <div class="relmap">
+    <div class="row">
+      <span class="node red">泳萱媽媽</span>
+      <span class="arrow">──決裂──▶</span>
+      <span class="node">萌孩教練團（動物家族）</span>
+      <span class="note">曾深度合作：媽媽制定隊規、辦活動、照顧隊員，換取免費跑台／輪組試用／保養等資源。決裂點：①資源說法從「免費」變「沒付錢」②教練借錢爭議③媽媽在群組提課程問題未獲回應。</span>
+    </div>
+    <div class="row">
+      <span class="node red">泳萱媽媽</span>
+      <span class="arrow">──被踢──▶</span>
+      <span class="node orange">小慧／彎道殺手帳號</span>
+      <span class="note">媽媽指稱小慧「自作主張」把她踢出車隊群組。10/13「彎道殺手」進本群攻擊媽媽，被圍剿後秒退；媽媽隨後以本尊現身貼截圖指認。</span>
+    </div>
+    <div class="row">
+      <span class="node red">泳萱媽媽</span>
+      <span class="arrow">──呼籲──▶</span>
+      <span class="node orange">檢舉教練公園上課</span>
+      <span class="note">媽媽在 Threads 呼籲檢舉公有地違規收費上課 → 引發「哇哈哈哈」散布封鎖線謠言 → 被「非洲獵人／盡力」實地查證為假。南部群友擔心血洗場地。</span>
+    </div>
+    <div class="row">
+      <span class="node red">泳萱／腹肌女</span>
+      <span class="arrow">──招牌選手──▶</span>
+      <span class="node">萌孩車隊</span>
+      <span class="note">強勢選手，賽場上落後追超的企圖心與「用腦袋騎車」的風格獲群友一致讚賞。傳出轉往 X 戰隊上課或成為自由車手，成去留問題的另一個火藥庫。</span>
+    </div>
+    <div class="row">
+      <span class="node green">檸檬</span>
+      <span class="arrow">──共鳴力挺──▶</span>
+      <span class="node red">泳萱媽媽</span>
+      <span class="note">檸檬自己也是「離隊後被前車隊造謠」的受害者，因此特別欣賞媽媽敢說出來的勇氣，但也多次呼籲「吃瓜就好、不用過多主觀評論」。</span>
+    </div>
+    <div class="row">
+      <span class="node orange">彎道殺手／泳萱媽媽會用腳踢泳萱／詠軒媽媽根本用訓練來掩飾自己打小孩</span>
+      <span class="arrow">──匿名攻擊──▶</span>
+      <span class="node red">泳萱媽媽</span>
+      <span class="note">三個疑似車隊方或反媽媽派的帳號，共同模式：進群 → 只用帳號名稱或短句攻擊 → 被質疑後秒退。被群友嘲諷「連屁都不敢放」「等CD」。</span>
+    </div>
+    <div class="row">
+      <span class="node purple">SSS／阿山／萬聖節快樂／嗯哼／67</span>
+      <span class="arrow">──辯護／質疑──▶</span>
+      <span class="node">萌孩車隊</span>
+      <span class="note">反方陣線：主張踢人是群主權利、媽媽證據不足、指控媽媽打小孩與過度訓練。與查證派（非洲獵人、盡力）在封鎖線議題上曾短暫合作。</span>
+    </div>
+    <div class="row">
+      <span class="node green">非洲獵人</span>
+      <span class="arrow">──查證打臉──▶</span>
+      <span class="node orange">哇哈哈哈（封鎖線謠言）</span>
+      <span class="note">非洲獵人與 HLK 車隊（HL）關係密切，反感無辜車隊被拖下水。凌晨實地查證場地沒封鎖線，戳破謠言並嗆「記得買警用封鎖線比較有說服力」。</span>
+    </div>
+    <div class="row">
+      <span class="node purple">吵架王（輪迴論）</span>
+      <span class="arrow">──解釋──▶</span>
+      <span class="node">所有車隊決裂事件</span>
+      <span class="note">「啟蒙→變強→跳槽→教練不爽→撕破臉」的輪迴框架，被檸檬、櫻萬美夕等人引用，成為群內解釋萌孩事件的標準答案。</span>
+    </div>
+    <div class="row">
+      <span class="node">9527（飛翔推廣）</span>
+      <span class="arrow">──宣傳──▶</span>
+      <span class="node green">沖繩 RIR2026／飛翔×DATi 竹北站</span>
+      <span class="note">9527 在主線打成一團時，依然堅持穿插賽事廣告（「爆米花×恐龍樂園×最後一天」），展現「靠北歸靠北、生意歸生意」的群組生態。</span>
+    </div>
+    <div class="row">
+      <span class="node">酸酸爸</span>
+      <span class="arrow">──發起──▶</span>
+      <span class="node orange">賽後加報爭議（事件一）</span>
+      <span class="note">與萌孩事件無直接關聯，但「護衛隊」這個詞正是他在 9/29 首創（「一下就被護衛隊帶走了」），一個多月後在萌孩事件中被群友正式沿用。</span>
+    </div>
+    <div class="row">
+      <span class="node">老鷹車隊（已解散）</span>
+      <span class="arrow">──前車鑑──▶</span>
+      <span class="node">楠梓場地／藍隊</span>
+      <span class="note">櫻萬美夕補充：那塊地早年屬老鷹車隊，被檢舉到車隊解散；之後藍隊接手使用反而沒事——暗示檢舉背後有地盤恩怨。</span>
+    </div>
+  </div>
+
+  <div class="callout key">
+    <b>一句話看懂關係網</b>
+    這是一場「<strong>付出過多的家長 vs 守著隊規的車隊</strong>」的經典型決裂：媽媽認為真心換絕情，車隊認為家長越界；中間夾著「借錢」「免費資源」「踢群」「檢舉場地」四顆炸彈，外面圍著一群吃瓜群眾、護衛隊與事實查核員，最後演變成全圈子的公共辯論。
+  </div>
+</section>
+
+<!-- ================= 10 CULTURE ================= -->
+<section id="culture">
+  <h2><span class="num">10</span>群組文化觀察：三個值得記住的現象</h2>
+
+  <div class="card">
+    <h4>現象一：「護衛隊」與「帶風向」的攻防戰術</h4>
+    <p>每次車隊爆發爭議，就會出現一批「<strong>護衛隊</strong>」（忠於教練的小齡家長）匿名進群攻擊爆料者。他們的固定戰術被群友完整歸納：</p>
+    <ul class="clean">
+      <li>進群先取一個針對性強的暱稱（如「彎道殺手」「好成績是打出來的」）。</li>
+      <li>用「聽說」「我朋友說」開場，砲火猛烈但不提供證據。</li>
+      <li>被質疑「你怎麼知道那麼多」後開始跳針。</li>
+      <li>最後<strong>秒退聊天室</strong>，留下「圖還沒做好人就跑了」的笑柄。</li>
+    </ul>
+    <p>群友的反制也很固定：「你都在幕內了怎麼會不知道內幕」「好多的聽說，要人家公布你也不公布」。這套攻防在 10/13 當天完整上演了三次。</p>
+  </div>
+
+  <div class="card">
+    <h4>現象二：羅生門下的「證據標準」大戰</h4>
+    <p>萌孩事件的核心困境是：<strong>爆料方拿得出截圖，防守方拿得出沉默</strong>。群友對此形成兩種截然不同的判讀：</p>
+    <ul class="clean">
+      <li><b>實質懷疑派</b>（SSS、萬聖節快樂）：「說被造謠卻沒有任何文字紀錄」、「說借錢卻秀不出借據與追討過程」、「公開平台講私事還連名帶姓帶小孩」——證據不足就不足以定罪。</li>
+      <li><b>經驗共鳴派</strong>（檸檬、海月初、盡力）：「造謠都是用說的，哪裡會有截圖」、「敢整理這麼多資料上來就已經很勇敢」、「教練方不出來澄清就是理虧」——沉默本身就是一種態度。</li>
+    </ul>
+    <p>沒有任何一方被完全說服，最終多數人選擇「吃瓜就好」。</p>
+  </div>
+
+  <div class="card">
+    <h4>現象三：靠北歸靠北，運動歸運動</h4>
+    <p>儘管吵得不可開交，群組始終維持著一種微妙平衡：</p>
+    <ul class="clean">
+      <li>「9527」在戰火最烈時依然穿插沖繩賽事報名連結，還自嘲「靠北歸靠北，最後一天」。</li>
+      <li>「酸酸爸」會在情緒升高時喊「攻擊大人可以，但不要在這裡散佈攻擊小孩的言論」。</li>
+      <li>「看看就走」的話代表多數人最終的選擇：「<strong>不管怎樣，我還是會欣賞這個孩子的比賽。其他就看看就好。</strong>」</li>
+      <li>群組隔幾天就會公告搬家（「本群明天要刪除，請加入新群」），顯示大家雖然愛吵，但也清楚這是個需要保持匿名與安全距離的空間。</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ================= 11 CONCLUSION ================= -->
+<section id="conclusion">
+  <h2><span class="num">11</span>結論：如果只有 60 秒，記住這 6 點</h2>
+
+  <div class="card">
+    <ol class="clean" style="font-size:15.5px;">
+      <li><b>這是一個台灣滑步車家長的匿名靠北群</b>，3 週內從賽事閒聊一路吵到車隊決裂，最後連場地封鎖線都要實地查證。</li>
+      <li><b>主線事件是「萌小孩（藍色車隊）與招牌選手泳萱媽媽的決裂」</b>：媽媽指控教練「免費變沒付錢、借錢不還、造謠、踢群」，教練方全程沉默，護衛隊多次匿名進群反擊但屢被打臉。</li>
+      <li><b>本尊親自進群對決是全事件最高潮</b>：「彎道殺手」帳號開砲秒退後，「我就是泳萱媽媽」現身貼截圖，引爆「我要看到血流成河」的吃瓜狂潮。</li>
+      <li><b>「檢舉場地」是最具殺傷力的武器，但也最容易失控</b>：媽媽呼籲檢舉 → 傳出封鎖線 → 群友實地查證是謠言——顯示這個圈子的資訊戰真假混雜。</li>
+      <li><b>所有人吵的其實是同一件事</b>：滑步車圈的「車隊輪迴」——家長付出、孩子變強、跳槽決裂、互揭瘡疤，然後新一代家長再重演一次。群友自己都說「這應該筆記一下給新家長預告」。</li>
+      <li><b>背景陰影是整個生態在萎縮</b>：參賽人數下滑、場地被檢舉越來越少、小孩上小學就退役、大人也跟著退——這才是群組裡所有焦慮的最終源頭。</li>
+    </ol>
+  </div>
+
+  <div class="callout warn">
+    <b>給新進成員／新的人員的提醒（綜合群友自身經驗）</b>
+    ① 這是羅生門，看完別急著站隊；② 「聽說」兩個字後面通常沒有證據；③ 任何車隊都會有恩怨，選適合自己的、好聚好散；④ 孩子是孩子，不是武器也不是賽馬——這是群內多數冷靜家長反覆強調的底線。
+  </div>
+</section>
+
+</div>
+
+<footer>
+  本報告依「靠北滑步車」LINE 群組對話紀錄（2026/09/24–10/15）整理製作。<br>
+  報告僅呈現群組內對話內容之脈絡與各方說法，不代表對任何當事人之是非判定。部分人物以網路暱稱指代，與真實身分之對應未經查證。
+</footer>
+
+</body>
+</html>
